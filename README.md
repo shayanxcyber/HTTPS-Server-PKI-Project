@@ -1,39 +1,52 @@
-# Project: Implementing a Secure HTTPS Server with a Custom Certificate Authority
+# HTTPS Server and Private PKI Lab
 
-This repository documents a hands-on project from the **41900 Cryptography** course, focused on the practical application of Public Key Infrastructure (PKI) to secure a web service with TLS/HTTPS.
+A hands-on university lab exploring how a private certificate authority establishes trust for an HTTPS service. The
+work was completed for UTS 41900 Cryptography using Linux, SSH and the OpenSSL command-line tools.
 
-The project involved the entire lifecycle of certificate management: from creating a private Root Certificate Authority (CA) to issuing a server certificate, deploying it on a web server, and verifying the secure connection. The primary tool used for all cryptographic operations was the industry-standard **OpenSSL** command-line interface.
+## What the lab demonstrates
 
-### Project Workflow & Key Stages
+1. Configuring an OpenSSH server and testing local access.
+2. Generating an RSA key pair for SSH public-key authentication.
+3. Creating a private root certificate authority and self-signed X.509 root certificate.
+4. Generating a server key and certificate-signing request.
+5. Signing the server certificate with the private CA.
+6. Starting an HTTPS test service with `openssl s_server`.
+7. Importing the lab CA into a browser trust store and validating the resulting HTTPS connection.
 
-The project was broken down into four distinct parts, demonstrating a layered approach to secure communications:
+```text
+Private root CA
+      |
+      | signs
+      v
+Server certificate + server private key
+      |
+      | presented by
+      v
+Local OpenSSL HTTPS service
+      |
+      | validated against imported lab CA
+      v
+Browser client
+```
 
-**1. Secure Shell (SSH) Configuration:**
-*   Established a baseline for secure remote access by setting up an SSH server on a Linux VM.
-*   Implemented both password-based and the more secure **public-key authentication**, demonstrating the use of RSA key pairs (`ssh-keygen`) for passwordless login.
+## Evidence
 
-**2. Private Certificate Authority (CA) Creation:**
-*   Acted as a private Root CA, the trust anchor for the custom PKI environment.
-*   Generated a 2048-bit RSA key pair (`ca.key`) and a self-signed X.509 root certificate (`ca.crt`) using OpenSSL. This is the foundation of the chain of trust.
+The [full lab report](docs/PKI-and-HTTPS-Lab-Report.pdf) records the commands, certificate output and browser
+validation from the exercise.
 
-**3. Server Certificate Generation & Signing:**
-*   Generated a unique RSA key pair for the web server (`server.key`).
-*   Created a Certificate Signing Request (CSR) (`server.csr`) containing the server's identity information (e.g., Common Name: `utscrypto.com.au`).
-*   Used the private CA created in Stage 2 to **sign the server's CSR**, issuing a valid, trusted X.509 certificate (`server.crt`).
+> All keys and certificates displayed in the report are disposable educational-lab artefacts and were not used to
+> protect production systems or real data.
 
-**4. HTTPS Server Deployment & Testing:**
-*   Ran a simple HTTPS server using `openssl s_server`, configured to use the newly signed server certificate and private key.
-*   Imported the custom Root CA certificate into a browser's trust store to resolve the "unknown issuer" error.
-*   Successfully connected to the server via `https://utscrypto.com.au:4433` and verified the secure connection, indicated by the browser's padlock icon.
+## Technologies and concepts
 
-### Core Skills & Technologies Demonstrated:
+- OpenSSL and X.509 certificates
+- public key infrastructure and certificate signing
+- TLS/HTTPS trust validation
+- SSH public-key authentication
+- Linux service configuration
 
-*   **Public Key Infrastructure (PKI):** Deep, practical understanding of the chain of trust, root CAs, and certificate signing.
-*   **TLS/SSL & HTTPS:** Hands-on implementation of the protocol that secures web traffic.
-*   **OpenSSL:** Proficiency in using the command-line tool for key generation, CSR management, and certificate creation.
-*   **X.509 Certificates:** Knowledge of certificate structure, including subjects, issuers, and public keys.
-*   **Secure Server Configuration:** Basic deployment of secure services on a Linux environment.
-*   **SSH & Public-Key Authentication:** Securing remote administrative access.
+## Scope
 
----
-*This project was completed as part of the 41900 Cryptography course. The full report is included in this repository.*
+This is a learning record from a controlled university environment. It demonstrates the certificate lifecycle and
+chain-of-trust workflow; it is not a reusable production PKI deployment.
+
